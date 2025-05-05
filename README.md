@@ -1,16 +1,11 @@
 # Welcome to the [TODO:Projectname] Project!
 
-<!-- Mission Statement -->
-<!-- More information about crafting your mission statement with examples -->
-<!-- https://contribute.cncf.io/maintainers/governance/charter/ -->
 
-[TODO: PROJECTNAME] is a [TODO: Type of Tool] that [TODO: Functions it
-performs]. [TODO: Reasons why these are needed and valuable]. [TODO:
-Implementation, strategy and architecture].
+Ochestra is an Enterprise Cloud Native DevOps-as-a-Service platform that leverages Artificial Inteligence and Kubernetes to help solve and/or deal with the key challenges that IT and Software Engineering teams who want to ran their products and workloads on kubernetes clusters will usually have to deal with - Complexity, Performance and Cost.
+
 
 [TODO: Additional paragraph describing your project (optional)]
 
-[TODO: PROJECTNAME] is hosted by the [Cloud Native Computing Foundation (CNCF)](https://cncf.io).
 
 ## Getting Started
 
