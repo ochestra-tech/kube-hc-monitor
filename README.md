@@ -1,7 +1,7 @@
 # Welcome to the Ochestra Project!
 
 
-Ochestra is an Cloud Native DevOps-as-a-Service platform that leverages Artificial Inteligence and Kubernetes to help solve and/or deal with the key challenges that IT and Software Engineering teams who want to ran their products and workloads on kubernetes clusters will usually have to deal with - Complexity, Performance and Cost.
+Ochestra is an cloud native DevOps-as-a-Service platform that leverages Artificial Inteligence to simplify and automate the management of cloud native workloads and help solve and/or deal with the key challenges that IT and Software Engineering teams who ran their application workloads on kubernetes and in the cloud native way,  will usually have to deal with - Complexity, Cost and Performance.
 
 
 [TODO: Additional paragraph describing your project (optional)]
