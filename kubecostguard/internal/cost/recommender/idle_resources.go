@@ -10,6 +10,7 @@ import (
 
 	"github.com/ochestra-tech/kubecostguard/internal/kubernetes"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -194,7 +195,7 @@ func (r *IdleResourceRecommender) identifyIdleNodes(resources map[string]interfa
 
 // identifyIdlePods identifies pods that are not running or inactive
 func (r *IdleResourceRecommender) identifyIdlePods() error {
-	pods, err := r.k8sClient.clientset.CoreV1().Pods("").List(r.ctx, metav1.ListOptions{})
+	pods, err := r.k8sClient.CoreV1().Pods("").List(r.ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to list pods: %w", err)
 	}
@@ -547,7 +548,7 @@ func (r *IdleResourceRecommender) createIdleNamespaceRecommendation(namespace co
 }
 
 // createUnusedVolumeRecommendation creates a recommendation for an unused volume
-func (r *IdleResourceRecommendation) createUnusedVolumeRecommendation(pvc corev1.PersistentVolumeClaim) *IdleResourceRecommendation {
+func (r *IdleResourceRecommender) createUnusedVolumeRecommendation(pvc corev1.PersistentVolumeClaim) *IdleResourceRecommendation {
 	// Estimate storage cost
 	storageSize := pvc.Spec.Resources.Requests.Storage().Value()
 	monthlyCostPerGB := 0.1 // $0.1 per GB per month

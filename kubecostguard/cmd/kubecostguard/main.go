@@ -42,7 +42,11 @@ func main() {
 	}()
 
 	// Initialize Kubernetes client
-	k8sClient, err := kubernetes.NewClient(cfg.Kubernetes)
+	k8sClient, err := kubernetes.NewClient(kubernetes.Config{
+		// Add necessary fields from cfg.Kubernetes
+		Kubeconfig: cfg.Kubernetes.Kubeconfig,
+		InCluster:  cfg.Kubernetes.InCluster,
+	})
 	if err != nil {
 		log.Fatalf("Failed to create Kubernetes client: %v", err)
 	}

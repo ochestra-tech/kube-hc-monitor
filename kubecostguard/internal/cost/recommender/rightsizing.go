@@ -118,37 +118,6 @@ func (r *RightsizingRecommender) Name() string {
 	return "rightsizing-recommender"
 }
 
-// GenerateRecommendations generates rightsizing recommendations
-func (r *RightsizingRecommender) GenerateRecommendations(resources map[string]interface{}, costs map[string]float64) ([]*RightsizingRecommendation, error) {
-	ctx := context.Background()
-	r.ctx = ctx
-
-	// Clear previous recommendations
-	r.recommendations = make([]*RightsizingRecommendation, 0)
-
-	// Analyze node rightsizing opportunities
-	if err := r.analyzeNodeRightsizing(resources, costs); err != nil {
-		log.Printf("Error analyzing node rightsizing: %v", err)
-	}
-
-	// Analyze pod rightsizing opportunities
-	if err := r.analyzePodRightsizing(resources, costs); err != nil {
-		log.Printf("Error analyzing pod rightsizing: %v", err)
-	}
-
-	// Analyze deployment rightsizing opportunities
-	if err := r.analyzeDeploymentRightsizing(resources, costs); err != nil {
-		log.Printf("Error analyzing deployment rightsizing: %v", err)
-	}
-
-	// Sort recommendations by potential savings
-	sort.Slice(r.recommendations, func(i, j int) bool {
-		return r.recommendations[i].PotentialSavings > r.recommendations[j].PotentialSavings
-	})
-
-	return r.recommendations, nil
-}
-
 // analyzeNodeRightsizing analyzes nodes for rightsizing opportunities
 func (r *RightsizingRecommender) analyzeNodeRightsizing(resources map[string]interface{}, costs map[string]float64) error {
 	// Get nodes from resources
@@ -243,7 +212,7 @@ func (r *RightsizingRecommender) analyzeDeploymentRightsizing(resources map[stri
 // getNodeMetrics retrieves utilization metrics for nodes
 func (r *RightsizingRecommender) getNodeMetrics() (map[string]*ResourceUtilization, error) {
 	// Get node metrics from metrics-server
-	nodeMetrics, err := r.k8sClient.metrics.NodeMetricses().List(r.ctx, metav1.ListOptions{})
+	nodeMetrics, err := r.k8sClient.MetricsV1beta1().NodeMetricses().List(r.ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get node metrics: %w", err)
 	}
@@ -448,7 +417,7 @@ func (r *RightsizingRecommender) analyzePodUtilization(podKey string, utilizatio
 
 // analyzeDeploymentUtilization analyzes deployment utilization
 func (r *RightsizingRecommender) analyzeDeploymentUtilization(deploymentName, namespace string, metrics *ResourceUtilization) *RightsizingRecommendation {
-	// Similar logic to pod analysis but aggregated across deployment
+	// Similar logic to pod analysis but aggregated across deploymeappsv1 "k8s.io/api/apps/v1"nt
 	recommendation := r.analyzePodUtilization(fmt.Sprintf("%s/%s", namespace, deploymentName), metrics)
 	if recommendation != nil {
 		recommendation.ResourceType = "deployment"
@@ -604,8 +573,8 @@ func (r *RightsizingRecommender) getNodeCapacity(nodeMap map[string]interface{})
 	}
 
 	return &ResourceUtilization{
-		CPURequest:    parseQuantity(capacity["cpu"]),
-		MemoryRequest: parseQuantity(capacity["memory"]),
+		CPURequest:    *parseQuantity(capacity["cpu"]),
+		MemoryRequest: *parseQuantity(capacity["memory"]),
 	}
 }
 

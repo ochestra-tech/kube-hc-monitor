@@ -74,6 +74,7 @@ type Analyzer struct {
 	costDataMu   sync.RWMutex
 	historyMu    sync.RWMutex
 	stopChan     chan struct{}
+	recCollector *recommender.RecommendationsCollector
 }
 
 // NewAnalyzer creates a new cost analyzer
