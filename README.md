@@ -1,11 +1,8 @@
-# Welcome to the Ochestra Project!
-
+# Welcome to the Ochestra AIOps Project!
 
 Ochestra is an Cloud Native DevOps-as-a-Service platform that leverages Artificial Inteligence and Kubernetes to help solve and/or deal with the key challenges that IT and Software Engineering teams who want to ran their products and workloads on kubernetes clusters will usually have to deal with - Complexity, Performance and Cost.
 
-
 [TODO: Additional paragraph describing your project (optional)]
-
 
 ## Getting Started
 

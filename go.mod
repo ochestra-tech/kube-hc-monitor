@@ -1,4 +1,4 @@
-module github.com/ochestra-tech
+module github.com/ochestra-tech/ochestra-ai
 
 go 1.24.0
 
