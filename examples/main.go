@@ -81,6 +81,7 @@ func main() {
 	ticker := time.NewTicker(config.CheckInterval)
 	defer ticker.Stop()
 
+
 	// Run first check immediately
 	if err := generateReport(ctx, clientset, metricsClient, pricing, config); err != nil {
 		log.Printf("Failed to generate initial report: %v", err)
@@ -283,20 +284,31 @@ func RunHealthCheck(ctx context.Context, clientset *kubernetes.Clientset, metric
 		"warningIssues":  countIssuesBySeverity(healthData.Issues, "warning"),
 		"cpuUsage":       healthData.ResourceUsage.ClusterCPUUsage,
 		"memoryUsage":    healthData.ResourceUsage.ClusterMemoryUsage,
+	summary := map[string]interface{}{
+		"healthScore":    healthData.HealthScore,
+		"readyNodes":     healthData.NodeStatus.ReadyNodes,
+		"totalNodes":     healthData.NodeStatus.TotalNodes,
+		"runningPods":    healthData.PodStatus.RunningPods,
+		"totalPods":      healthData.PodStatus.TotalPods,
+		"criticalIssues": len(filterIssuesBySeverity(healthData.Issues, "critical")),
+		"warningIssues":  len(filterIssuesBySeverity(healthData.Issues, "warning")),
+		"cpuUsage":       healthData.ResourceUsage.ClusterCPUUsage,
+		"memoryUsage":    healthData.ResourceUsage.ClusterMemoryUsage,
 	}
-
+	}
 	return summary, nil
 }
 
-// GenerateCostForecast generates a cost forecast based on current usage trends
-func GenerateCostForecast(ctx context.Context, clientset *kubernetes.Clientset, metricsClient *metricsv.Clientset, pricing map[string]cost.ResourcePricing, months int) (*CostForecast, error) {
-	// Get current costs
-	nodeCosts, err := cost.GetNodeCosts(ctx, clientset, metricsClient, pricing)
-	if err != nil {
-		return nil, err
+// filterIssuesBySeverity filters issues by their severity level
+func filterIssuesBySeverity(issues []health.Issue, severity string) []health.Issue {
+	filtered := make([]health.Issue, 0)
+	for _, issue := range issues {
+		if issue.Severity == severity {
+			filtered = append(filtered, issue)
+		}
 	}
-
-	// Calculate current monthly cost
+	return filtered
+}
 	currentMonthlyTotal := 0.0
 	for _, node := range nodeCosts {
 		currentMonthlyTotal += node.TotalCost * 24 * 30
