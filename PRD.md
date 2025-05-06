@@ -1,4 +1,4 @@
-# Unified Kubernetes Management Platform Design Specification
+# Platform Design Specification
 
 ## 1. Executive Summary
 
