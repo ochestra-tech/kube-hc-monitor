@@ -35,7 +35,7 @@ The Unified Kubernetes Management Platform provides a complete solution for mana
 
 The platform follows a modular, microservices-based architecture with the following key components:
 
-![Systems Architecture](hla.svg "Ochestra's System Architecture")
+![Systems Architecture](/images/hla.svg "Ochestra's System Architecture")
 
 - **Central Management Plane**: Core control plane for managing all Kubernetes clusters
 - **Agent-based Architecture**: Lightweight agents deployed in each managed cluster
