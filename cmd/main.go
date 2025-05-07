@@ -398,13 +398,7 @@ func generateCostReport(clientset *kubernetes.Clientset, metricsClient *versione
 		memCapacity := float64(node.Status.Capacity.Memory().Value()) / (1024 * 1024 * 1024)
 		memCost := memCapacity * pricing.MemoryCostPerGBHr
 
-		// Apply region multiplier
-		region := "us-east-1" // Default region
-		if r, ok := node.Labels["topology.kubernetes.io/region"]; ok {
-			region = r
-		}
-
-		// Just use the node's region label for display, actual multiplier comes from pricing data
+		// Apply region multiplier from pricing data
 		nodeCost := (cpuCost + memCost) * pricing.RegionMultiplier
 
 		if _, ok := costReport.CostByNodeType[nodeType]; !ok {
