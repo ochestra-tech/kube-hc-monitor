@@ -186,7 +186,7 @@ package main
 import (
     "context"
     "fmt"
-    "your-module/pkg/health"
+    "github.com/ochestra-tech/ochestra-ai/pkg/health"
 )
 
 func main() {
@@ -212,7 +212,7 @@ package main
 
 import (
     "context"
-    "your-module/pkg/cost"
+    "github.com/ochestra-tech/ochestra-ai/pkg/cost"
 )
 
 func main() {
@@ -243,7 +243,7 @@ package main
 import (
     "context"
     "os"
-    "your-module/pkg/reports"
+    "github.com/ochestra-tech/ochestra-ai/pkg/reports"
 )
 
 func main() {
