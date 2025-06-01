@@ -1,0 +1,32 @@
+{
+  "defaults": {
+    "cpu": 0.03,
+    "memory": 0.004,
+    "storage": 0.00012,
+    "network": 0.08,
+    "gpuPricing": {
+      "nvidia-tesla-v100": 1.2,
+      "nvidia-tesla-k80": 0.6
+    }
+  },
+  "instanceTypes": {
+    "m5.large": {
+      "cpu": 0.032,
+      "memory": 0.0045,
+      "storage": 0.00015,
+      "network": 0.09
+    },
+    "c5.large": {
+      "cpu": 0.035,
+      "memory": 0.0035,
+      "storage": 0.00018,
+      "network": 0.095
+    }
+  },
+  "regionMultipliers": {
+    "us-east-1": 1.0,
+    "us-west-2": 1.05,
+    "eu-west-1": 1.1,
+    "ap-southeast-1": 1.15
+  }
+}

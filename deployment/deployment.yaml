@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ochestra-ai
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ochestra-ai
+  template:
+    metadata:
+      labels:
+        app: ochestra-ai
+    spec:
+      serviceAccountName: ochestra-ai
+      containers:
+      - name: ochestra-ai
+        image: your-registry/ochestra-ai:latest
+        args:
+          - "--interval=5m"
+          - "--metrics-port=8080"
+          - "--type=combined"
+        ports:
+        - containerPort: 8080
+          name: metrics
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

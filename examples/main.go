@@ -23,9 +23,9 @@ import (
 	"k8s.io/metrics/pkg/client/clientset/versioned"
 	metricsv "k8s.io/metrics/pkg/client/clientset/versioned"
 
-	"your-module/pkg/cost"
-	"your-module/pkg/health"
-	"your-module/pkg/reports"
+	"github.com/ochestra-tech/ochestra-ai/pkg/cost"
+	"github.com/ochestra-tech/ochestra-ai/pkg/health"
+	"github.com/ochestra-tech/ochestra-ai/pkg/reports"
 )
 
 // Config holds the application configuration
@@ -93,6 +93,33 @@ func main() {
 			log.Printf("Failed to generate report: %v", err)
 		}
 	}
+
+	// Run resource optimization analysis
+    optimizer := NewResourceOptimizer(clientset, metricsClient)
+    report, err := optimizer.GenerateOptimizationReport(context.Background())
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    fmt.Printf("Potential Monthly Savings: $%.2f\n", report.PotentialSavings)
+    fmt.Printf("Optimization Recommendations: %d\n", len(report.Recommendations))
+    
+    for _, rec := range report.Recommendations {
+        fmt.Printf("- %s: %s (Save $%.2f/month)\n", 
+            rec.Type, rec.Description, rec.PotentialSaving)
+    }
+    
+    // Run cleanup with dry-run
+    cleanupRecs, err := CleanupUnusedResources(context.Background(), clientset, true)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    fmt.Printf("\nCleanup Recommendations: %d\n", len(cleanupRecs))
+    for _, rec := range cleanupRecs {
+        fmt.Printf("- Delete %s %s/%s: %s\n", 
+            rec.ResourceType, rec.Namespace, rec.Name, rec.Reason)
+    }
 }
 
 // parseFlags parses command line flags and returns configuration
