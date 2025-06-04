@@ -1,5 +1,3 @@
-// pkg/cost/utils.go - Cost management utilities
-
 package cost
 
 import (

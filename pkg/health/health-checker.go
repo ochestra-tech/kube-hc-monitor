@@ -1,5 +1,3 @@
-// pkg/health/utils.go - Health monitoring utilities
-
 package health
 
 import (

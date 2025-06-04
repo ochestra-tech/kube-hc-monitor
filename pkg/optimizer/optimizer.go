@@ -30,7 +30,6 @@ type ResourceOptimizer struct {
 }
 
 func (o *ResourceOptimizer) GenerateOptimizationReport(ctx context.Context) (*OptimizationReport, error) {
-	// Implement your optimization logic here
 	return &OptimizationReport{
 		PotentialSavings: 0.0,
 		Recommendations:  []Recommendation{},

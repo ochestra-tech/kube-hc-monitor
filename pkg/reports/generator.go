@@ -13,8 +13,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	metricsv "k8s.io/metrics/pkg/client/clientset/versioned"
 
-	"your-module/pkg/cost"
-	"your-module/pkg/health"
+	"github.com/ochestra-tech/ochestra-ai/pkg/cost"
+	"github.com/ochestra-tech/ochestra-ai/pkg/health"
 )
 
 // ReportFormat specifies the output format for reports
@@ -25,6 +25,88 @@ const (
 	FormatCSV  ReportFormat = "csv"
 	FormatHTML ReportFormat = "html"
 	FormatText ReportFormat = "text"
+
+	combinedReportHTMLTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Kubernetes Combined Report</title>
+</head>
+<body>
+	<h1>Kubernetes Cluster Combined Report</h1>
+	<p>Generated at: {{.Timestamp}}</p>
+	
+	<h2>Health Status</h2>
+	<p>Health Score: {{.Health.HealthScore}}/100</p>
+	
+	<h2>Cost Summary</h2>
+	<table>
+		<tr>
+			<th>Node</th>
+			<th>Instance Type</th>
+			<th>Total Cost</th>
+		</tr>
+		{{range .Nodes}}
+		<tr>
+			<td>{{.Name}}</td>
+			<td>{{.InstanceType}}</td>
+			<td>${{printf "%.2f" .TotalCost}}</td>
+		</tr>
+		{{end}}
+	</table>
+</body>
+</html>`
+
+	healthReportHTMLTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Kubernetes Health Report</title>
+</head>
+<body>
+	<h1>Kubernetes Cluster Health Report</h1>
+	<p>Generated at: {{.Timestamp}}</p>
+	<p>Health Score: {{.HealthScore}}/100</p>
+	
+	<h2>Node Status</h2>
+	<ul>
+		<li>Total Nodes: {{.NodeStatus.TotalNodes}}</li>
+		<li>Ready Nodes: {{.NodeStatus.ReadyNodes}}</li>
+	</ul>
+</body>
+</html>`
+
+	costReportHTMLTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Kubernetes Cost Report</title>
+</head>
+<body>
+	<h1>Kubernetes Cluster Cost Report</h1>
+	<p>Generated at: {{.Timestamp}}</p>
+	
+	<h2>Node Costs</h2>
+	<table>
+		<tr>
+			<th>Node</th>
+			<th>Instance Type</th>
+			<th>Total Cost</th>
+			<th>CPU Cost</th>
+			<th>Memory Cost</th>
+		</tr>
+		{{range .Nodes}}
+		<tr>
+			<td>{{.Name}}</td>
+			<td>{{.InstanceType}}</td>
+			<td>${{printf "%.2f" .TotalCost}}</td>
+			<td>${{printf "%.2f" .CPUCost}}</td>
+			<td>${{printf "%.2f" .MemoryCost}}</td>
+		</tr>
+		{{end}}
+	</table>
+</body>
+</html>`
 )
 
 // ReportGenerator handles report generation
@@ -139,6 +221,24 @@ func (r *ReportGenerator) generateHealthReportHTML(healthData *health.ClusterHea
 	return tmpl.Execute(r.writer, healthData)
 }
 
+// generateCostReportJSON generates a JSON cost report
+func (r *ReportGenerator) generateCostReportJSON(podCosts []cost.PodCostData, nodeCosts []cost.NodeCostData, namespaceCosts []cost.NamespaceCostData) error {
+	data := struct {
+		Pods       []cost.PodCostData       `json:"pods"`
+		Nodes      []cost.NodeCostData      `json:"nodes"`
+		Namespaces []cost.NamespaceCostData `json:"namespaces"`
+		Timestamp  time.Time                `json:"timestamp"`
+	}{
+		Pods:       podCosts,
+		Nodes:      nodeCosts,
+		Namespaces: namespaceCosts,
+		Timestamp:  time.Now(),
+	}
+	encoder := json.NewEncoder(r.writer)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(data)
+}
+
 // generateHealthReportText generates a text health report
 func (r *ReportGenerator) generateHealthReportText(healthData *health.ClusterHealth) error {
 	fmt.Fprintf(r.writer, "=== Kubernetes Cluster Health Report ===\n")
@@ -194,6 +294,74 @@ func (r *ReportGenerator) generateHealthReportText(healthData *health.ClusterHea
 	}
 
 	return nil
+}
+
+// generateCombinedReportText generates a text combined report
+func (r *ReportGenerator) generateCombinedReportText(healthData *health.ClusterHealth, podCosts []cost.PodCostData, nodeCosts []cost.NodeCostData, namespaceCosts []cost.NamespaceCostData) error {
+	// Print health report
+	if err := r.generateHealthReportText(healthData); err != nil {
+		return err
+	}
+
+	fmt.Fprintf(r.writer, "\n\n")
+
+	// Print cost report
+	return r.generateCostReportText(podCosts, nodeCosts, namespaceCosts)
+}
+
+// generateCombinedReportJSON generates a JSON combined report
+func (r *ReportGenerator) generateCombinedReportJSON(healthData *health.ClusterHealth, podCosts []cost.PodCostData, nodeCosts []cost.NodeCostData, namespaceCosts []cost.NamespaceCostData) error {
+	combinedReport := struct {
+		Health     *health.ClusterHealth    `json:"health"`
+		Pods       []cost.PodCostData       `json:"pods"`
+		Nodes      []cost.NodeCostData      `json:"nodes"`
+		Namespaces []cost.NamespaceCostData `json:"namespaces"`
+	}{
+		Health:     healthData,
+		Pods:       podCosts,
+		Nodes:      nodeCosts,
+		Namespaces: namespaceCosts,
+	}
+
+	encoder := json.NewEncoder(r.writer)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(combinedReport)
+}
+
+// generateCostReportHTML generates an HTML cost report
+func (r *ReportGenerator) generateCostReportHTML(podCosts []cost.PodCostData, nodeCosts []cost.NodeCostData, namespaceCosts []cost.NamespaceCostData) error {
+	tmpl := template.Must(template.New("cost").Parse(costReportHTMLTemplate))
+	data := struct {
+		Pods       []cost.PodCostData
+		Nodes      []cost.NodeCostData
+		Namespaces []cost.NamespaceCostData
+		Timestamp  time.Time
+	}{
+		Pods:       podCosts,
+		Nodes:      nodeCosts,
+		Namespaces: namespaceCosts,
+		Timestamp:  time.Now(),
+	}
+	return tmpl.Execute(r.writer, data)
+}
+
+// generateCombinedReportHTML generates an HTML combined report
+func (r *ReportGenerator) generateCombinedReportHTML(healthData *health.ClusterHealth, podCosts []cost.PodCostData, nodeCosts []cost.NodeCostData, namespaceCosts []cost.NamespaceCostData) error {
+	tmpl := template.Must(template.New("combined").Parse(combinedReportHTMLTemplate))
+	data := struct {
+		Health     *health.ClusterHealth
+		Pods       []cost.PodCostData
+		Nodes      []cost.NodeCostData
+		Namespaces []cost.NamespaceCostData
+		Timestamp  time.Time
+	}{
+		Health:     healthData,
+		Pods:       podCosts,
+		Nodes:      nodeCosts,
+		Namespaces: namespaceCosts,
+		Timestamp:  time.Now(),
+	}
+	return tmpl.Execute(r.writer, data)
 }
 
 // generateCostReportText generates a text cost report
