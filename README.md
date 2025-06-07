@@ -421,12 +421,12 @@ func main() {
 ```
 .
 ├── cmd/
-│   └── main.go                 # Application entry point
+│   └── main.go                # Application entry point
 ├── pkg/
 │   ├── health/
-│   │   └── utils.go           # Health monitoring utilities
+│   │   └── health-checker.go  # Health monitoring utilities
 │   ├── cost/
-│   │   └── utils.go           # Cost calculation utilities
+│   │   └── cost-tracker.go    # Cost calculation utilities
 │   └── reports/
 │       └── generator.go       # Report generation
 ├── examples/

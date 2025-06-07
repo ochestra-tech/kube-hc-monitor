@@ -244,8 +244,6 @@ func GetPodCosts(
 		podData.TotalCost = podData.CPUCost + podData.MemoryCost + podData.StorageCost + podData.NetworkCost
 
 		// Calculate efficiency (ratio of usage to requests)
-		// In a real implementation, this would use metrics-server data
-		// For now, just use a placeholder value
 		podData.Efficiency = 0.8 // Placeholder
 
 		results = append(results, podData)
