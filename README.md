@@ -361,49 +361,6 @@ Total Monthly Cost:             $8,964.00
 └─────────────────┴──────────────┴───────────┴─────────────┴───────────┘
 ```
 
-### Cost Optimization Script
-
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-)
-
-func main() {
-    clientset, metricsClient := initKubernetesClients()
-    
-    // Run resource optimization analysis
-    optimizer := NewResourceOptimizer(clientset, metricsClient)
-    report, err := optimizer.GenerateOptimizationReport(context.Background())
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Printf("Potential Monthly Savings: $%.2f\n", report.PotentialSavings)
-    fmt.Printf("Optimization Recommendations: %d\n", len(report.Recommendations))
-    
-    for _, rec := range report.Recommendations {
-        fmt.Printf("- %s: %s (Save $%.2f/month)\n", 
-            rec.Type, rec.Description, rec.PotentialSaving)
-    }
-    
-    // Run cleanup with dry-run
-    cleanupRecs, err := CleanupUnusedResources(context.Background(), clientset, true)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Printf("\nCleanup Recommendations: %d\n", len(cleanupRecs))
-    for _, rec := range cleanupRecs {
-        fmt.Printf("- Delete %s %s/%s: %s\n", 
-            rec.ResourceType, rec.Namespace, rec.Name, rec.Reason)
-    }
-}
-```
-
 ## Contributing
 
 ### Development Setup
@@ -500,9 +457,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/ochestra-ai/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/ochestra-ai/discussions)
-- **Documentation**: [Wiki](https://github.com/your-org/ochestra-ai/wiki)
+- **Issues**: [GitHub Issues](https://github.com/ochestra-tech/ochestra-ai/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ochestra-tech/ochestra-ai/discussions)
+- **Documentation**: [Wiki](https://github.com/ochestra-tech/ochestra-ai/wiki)
 
 ## Roadmap
 
@@ -512,7 +469,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] **Cloud provider integration**: Direct billing API integration
 - [ ] **Slack/Teams notifications**: Real-time alerts
 - [ ] **Helm chart**: Easy deployment with Helm
-- [ ] **Web UI**: Built-in web interface for monitoring
+- [ ] **Web UI**: Built-in web interface for centralized multi-cluster monitoring & observability
 
 ## Acknowledgments
 
