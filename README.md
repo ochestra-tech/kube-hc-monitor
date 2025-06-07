@@ -463,13 +463,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Roadmap
 
-- [ ] **Multi-cluster support**: Monitor multiple clusters from a single instance
-- [ ] **Historical data storage**: Store metrics in time-series database
+- [ ] **Multi-cluster support**: Monitor multiple clusters from a single instance (KubeCostGuard Project)
+- [ ] **Historical data storage**: Store metrics in time-series database (KubeOpera Project)
 - [ ] **Advanced forecasting**: ML-based cost prediction
-- [ ] **Cloud provider integration**: Direct billing API integration
+- [ ] **Cloud provider integration**: Direct billing API integration (KubeCostGuard Project)
 - [ ] **Slack/Teams notifications**: Real-time alerts
-- [ ] **Helm chart**: Easy deployment with Helm
-- [ ] **Web UI**: Built-in web interface for centralized multi-cluster monitoring & observability
+- [ ] **Helm chart**: Easy deployment with Helm (KubeCostGuard Project)
+- [ ] **Web UI**: Built-in web interface for centralized multi-cluster monitoring & observability (KubeCostOpera Project)
 
 ## Acknowledgments
 
